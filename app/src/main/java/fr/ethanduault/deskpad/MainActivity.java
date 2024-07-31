@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,8 +28,6 @@ import fr.ethanduault.deskpad.Utils;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String SERVER_IP = "192.168.1.161";
-    private static final int SERVER_PORT = 9876;
     private static final String SERVER_PASSWORD;
 
     static {
@@ -59,13 +58,20 @@ public class MainActivity extends AppCompatActivity {
                 sendMessage("key","F13");
             }
         });
+        Button buttonCommand = findViewById(R.id.buttonCommand);
+        buttonCommand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendMessage("run","explorer.exe");
+            }
+        });
     }
 
     private void sendMessage(String type, String message) {
         new SendMessageTask().execute(type, message);
     }
 
-    private static class SendMessageTask extends AsyncTask<String, Void, Void> {
+    private class SendMessageTask extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... params) {
             JSONObject data = new JSONObject();
@@ -76,7 +82,11 @@ public class MainActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
-            try (Socket socket = new Socket(SERVER_IP, SERVER_PORT);
+            EditText ipAddress = findViewById(R.id.ipAddress);
+            EditText ipPort = findViewById(R.id.ipPort);
+            System.out.println(ipAddress.getText().toString());
+            System.out.println(ipPort.getText().toString());
+            try (Socket socket = new Socket(ipAddress.getText().toString(), Integer.parseInt(ipPort.getText().toString()));
 
 
                  PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true)) {
