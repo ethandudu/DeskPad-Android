@@ -32,6 +32,7 @@ android {
 }
 
 dependencies {
+    implementation (libs.java.websocket)
 
     implementation(libs.appcompat)
     implementation(libs.material)
