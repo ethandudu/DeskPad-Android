@@ -1,8 +1,7 @@
 package fr.ethanduault.deskpad;
 
-import static fr.ethanduault.deskpad.Utils.getSHA256;
+import static fr.ethanduault.deskpad.Utils.*;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,11 +15,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.Socket;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 
@@ -29,7 +24,6 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.ethanduault.deskpad.Utils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         buttonF13.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //sendMessage("key","F13");
+                sendMessage("key","F13");
             }
         });
 
@@ -71,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         buttonCommand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //sendMessage("run","explorer.exe");
+                sendMessage("run","explorer.exe");
             }
         });
 
@@ -79,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onLongClick(View v) {
                 Toast.makeText(MainActivity.this, "Long click", Toast.LENGTH_SHORT).show();
-                //sendMessage("run","calc.exe");
+                sendMessage("run","calc.exe");
                 return true;
             }
         });
@@ -94,6 +88,17 @@ public class MainActivity extends AppCompatActivity {
                 createWebSocketClient(ipAddress.getText().toString(), Integer.parseInt(port.getText().toString()));
             }
         });
+    }
+
+    private void sendMessage(String type, String message) {
+        JSONObject data = new JSONObject();
+        try {
+            data.put("type", type);
+            data.put("message", message);
+            webSocketClient.send(data.toString());
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void createWebSocketClient(String address, int port) {
