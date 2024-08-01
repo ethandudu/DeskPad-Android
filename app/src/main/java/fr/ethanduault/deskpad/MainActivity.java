@@ -2,6 +2,8 @@ package fr.ethanduault.deskpad;
 
 import static fr.ethanduault.deskpad.Utils.*;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,19 +29,8 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String SERVER_PASSWORD;
     private WebSocketClient webSocketClient;
-
-    static {
-        try {
-            SERVER_PASSWORD = getSHA256("password");
-            System.out.println("Password"+SERVER_PASSWORD);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +43,17 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        Button buttonF13 = findViewById(R.id.buttonF13);
+        preferences = getSharedPreferences("settings", MODE_PRIVATE);
+        if (preferences.getBoolean("firstRun", true)) {
+            Intent intent = new Intent(this, FirstRunActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        createWebSocketClient(preferences.getString("ipAddress", ""), preferences.getInt("port", 9876));
+
+        Button buttonF13 = findViewById(R.id.button1);
         buttonF13.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        Button buttonCommand = findViewById(R.id.buttonCommand);
+        Button buttonCommand = findViewById(R.id.button2);
         buttonCommand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,16 +79,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        Button buttonConnect = findViewById(R.id.buttonConnect);
-        buttonConnect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditText ipAddress = findViewById(R.id.ipAddress);
-                EditText port = findViewById(R.id.ipPort);
-                createWebSocketClient(ipAddress.getText().toString(), Integer.parseInt(port.getText().toString()));
-            }
-        });
     }
 
     private void sendMessage(String type, String message) {
@@ -118,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject data = new JSONObject();
                 try {
                     data.put("type", "auth");
-                    data.put("password", SERVER_PASSWORD);
+                    data.put("password", preferences.getString("password", ""));
                     send(data.toString());
                 } catch (JSONException e) {
                     throw new RuntimeException(e);

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">DeskPad</string>
+    <string name="next">Suivant</string>
+    <string name="startup_text">Bienvenue sur DeskPad !\nIl semblerait que c\'est votre première fois par ici, suivez les étapes afin de configurer l\'application</string>
+    <string name="settings">Paramètres</string>
+    <string name="ip_address">Adresse IP</string>
+    <string name="port">Port</string>
 </resources>

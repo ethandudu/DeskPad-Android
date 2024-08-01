@@ -15,17 +15,22 @@
         android:theme="@style/Theme.DeskPad"
         tools:targetApi="31">
         <activity
-            android:name=".Settings"
-            android:exported="false" />
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:screenOrientation="sensorPortrait"/>
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="sensorLandscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".FirstRunActivity"
+            android:exported="false"
+            android:screenOrientation="sensorPortrait"/>
     </application>
 
 </manifest>
