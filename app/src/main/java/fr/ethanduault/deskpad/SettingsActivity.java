@@ -1,8 +1,13 @@
 package fr.ethanduault.deskpad;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -20,5 +25,47 @@ public class SettingsActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+
+        SharedPreferences preferences = getSharedPreferences("settings", MODE_PRIVATE);
+        EditText ipAddress = findViewById(R.id.ipAddress);
+        EditText port = findViewById(R.id.port);
+        EditText password = findViewById(R.id.password);
+
+        try {
+            ipAddress.setText(preferences.getString("ipAddress", ""));
+            port.setText(preferences.getInt("port", 0) + "");
+            password.setText(preferences.getString("password", ""));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Button buttonSave = findViewById(R.id.save);
+        buttonSave.setOnClickListener(v -> {
+            if (ipAddress.getText().toString().isEmpty() || port.getText().toString().isEmpty() || password.getText().toString().isEmpty()) {
+                AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        .setTitle("Erreur")
+                        .setMessage("Veuillez remplir tous les champs.")
+                        .setPositiveButton("OK", null)
+                        .create();
+                alertDialog.show();
+                return;
+            }
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("ipAddress", ipAddress.getText().toString());
+            editor.putString("port", port.getText().toString());
+            editor.putString("password", password.getText().toString());
+            editor.apply();
+            Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+            finish();
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

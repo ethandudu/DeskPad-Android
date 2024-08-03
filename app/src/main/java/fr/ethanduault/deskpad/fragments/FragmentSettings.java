@@ -46,15 +46,12 @@ public class FragmentSettings extends Fragment {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString("ipAddress", ipAddress.getText().toString());
             editor.putInt("port", Integer.parseInt(port.getText().toString()));
-            try {
-                editor.putString("password", Utils.getSHA256(password.getText().toString()));
-            } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
+            editor.putString("password", password.getText().toString());
             editor.putBoolean("firstRun", false);
             editor.apply();
             Intent intent = new Intent(requireActivity(), MainActivity.class);
             startActivity(intent);
+            requireActivity().finish();
         });
         return view;
     }

@@ -51,6 +51,17 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        Button buttonSettings = findViewById(R.id.settings);
+        buttonSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
         createWebSocketClient(preferences.getString("ipAddress", ""), preferences.getInt("port", 9876));
 
         Button buttonF13 = findViewById(R.id.button1);
@@ -109,9 +120,9 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject data = new JSONObject();
                 try {
                     data.put("type", "auth");
-                    data.put("password", preferences.getString("password", ""));
+                    data.put("password", Utils.getSHA256(preferences.getString("password", "")));
                     send(data.toString());
-                } catch (JSONException e) {
+                } catch (JSONException | UnsupportedEncodingException | NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
                 }
             }

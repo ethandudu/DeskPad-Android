@@ -5,4 +5,5 @@
     <string name="settings">Paramètres</string>
     <string name="ip_address">Adresse IP</string>
     <string name="port">Port</string>
+    <string name="save">Enregistrer</string>
 </resources>
