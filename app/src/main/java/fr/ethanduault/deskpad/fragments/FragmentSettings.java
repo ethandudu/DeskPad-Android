@@ -15,6 +15,9 @@ import android.widget.EditText;
 
 import androidx.annotation.Nullable;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
@@ -48,6 +51,23 @@ public class FragmentSettings extends Fragment {
             editor.putInt("port", Integer.parseInt(port.getText().toString()));
             editor.putString("password", password.getText().toString());
             editor.putBoolean("firstRun", false);
+
+            JSONArray profiles = new JSONArray();
+            JSONObject profile = new JSONObject();
+            try {
+                profile.put("name", "Default");
+                for (int i = 1; i < 7; i++) {
+                    JSONObject data = new JSONObject();
+                    data.put("type", "key");
+                    data.put("value", i);
+                    profile.put("Button" + i, data);
+                }
+                profiles.put(profile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            editor.putString("profiles", profiles.toString());
+
             editor.apply();
             Intent intent = new Intent(requireActivity(), MainActivity.class);
             startActivity(intent);

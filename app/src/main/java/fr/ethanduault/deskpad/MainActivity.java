@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -24,6 +25,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,35 +64,45 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button buttonProfiles = findViewById(R.id.profiles);
+        buttonProfiles.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                String[] choices;
+                JSONArray profiles;
+                try {
+                    profiles = new JSONArray(preferences.getString("profiles", ""));
+                    choices = new String[profiles.length()];
+                    for (int i = 0; i < profiles.length(); i++) {
+                        choices[i] = profiles.getJSONObject(i).getString("name");
+                    }
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder
+                        .setTitle("Profils")
+                        .setPositiveButton("Sélectionner", (dialog, which) -> {
+                            loadProfile(choices[which+1]);
+                        })
+                        .setNegativeButton("Nouveau", (dialog, which) -> {
+
+                        })
+                        .setNeutralButton("Sauvegarder", (dialog, which) -> {
+
+                        })
+                        .setSingleChoiceItems(choices, 0, (dialog, which) -> {
+                        });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            }
+        });
 
         createWebSocketClient(preferences.getString("ipAddress", ""), preferences.getInt("port", 9876));
-
-        Button buttonF13 = findViewById(R.id.button1);
-        buttonF13.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendMessage("key","F13");
-            }
-        });
-
-
-        Button buttonCommand = findViewById(R.id.button2);
-        buttonCommand.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendMessage("run","explorer.exe");
-            }
-        });
-
-        buttonCommand.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Toast.makeText(MainActivity.this, "Long click", Toast.LENGTH_SHORT).show();
-                sendMessage("run","calc.exe");
-                return true;
-            }
-        });
-
     }
 
     private void sendMessage(String type, String message) {
@@ -121,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject data = new JSONObject();
                 try {
                     data.put("type", "auth");
-                    data.put("password", Utils.getSHA256(preferences.getString("password", "")));
+                    data.put("password", getSHA256(preferences.getString("password", "")));
                     send(data.toString());
                 } catch (JSONException | UnsupportedEncodingException | NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
@@ -166,5 +178,64 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         webSocketClient.connect();
+    }
+
+    private void loadProfile(String name) {
+        JSONArray profiles;
+
+        Button button1 = findViewById(R.id.button1);
+        Button button2 = findViewById(R.id.button2);
+        Button button3 = findViewById(R.id.button3);
+        Button button4 = findViewById(R.id.button4);
+        Button button5 = findViewById(R.id.button5);
+        Button button6 = findViewById(R.id.button6);
+
+        try {
+            profiles = new JSONArray(preferences.getString("profiles", ""));
+            for (int i = 0; i < profiles.length(); i++) {
+                JSONObject profile = profiles.getJSONObject(i);
+                if (profile.getString("name").equals(name)) {
+                    for (int j = 1; j < profile.length(); j++) {
+                        JSONObject data = profile.getJSONObject("Button" + j);
+                        if (data.getString("type").equals("key")) {
+                            String value = data.getString("value");
+                            switch (j) {
+                                case 1:
+                                    button1.setText(data.getString("value"));
+                                    button1.setOnClickListener(v -> sendMessage("key", value));
+                                    button1.setOnLongClickListener(v -> {
+                                        sendMessage("key", value);
+                                        return true;
+                                    });
+                                    break;
+                                case 2:
+                                    button2.setText(data.getString("value"));
+                                    button2.setOnClickListener(v -> sendMessage("key", value));
+                                    break;
+                                case 3:
+                                    button3.setText(data.getString("value"));
+                                    button3.setOnClickListener(v -> sendMessage("key", value));
+                                    break;
+                                case 4:
+                                    button4.setText(data.getString("value"));
+                                    button4.setOnClickListener(v -> sendMessage("key", value));
+                                    break;
+                                case 5:
+                                    button5.setText(data.getString("value"));
+                                    button5.setOnClickListener(v -> sendMessage("key", value));
+                                    break;
+                                case 6:
+                                    button6.setText(data.getString("value"));
+                                    button6.setOnClickListener(v -> sendMessage("key", value));
+                                    break;
+                            }
+                        }
+                    }
+                    return;
+                }
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
