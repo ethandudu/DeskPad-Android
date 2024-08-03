@@ -63,9 +63,17 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Attention");
+        builder.setMessage("Voulez-vous vraiment quitter sans sauvegarder ?");
+        builder.setPositiveButton("Oui", (dialog, which) -> {
+            Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+            startActivity(intent);
+            super.onBackPressed();
+        });
+        builder.setNegativeButton("Non", null);
+        builder.create();
+        builder.show();
     }
 }
