@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -140,8 +141,12 @@ public class MainActivity extends AppCompatActivity {
                     if (data.getString("type").equals("auth")) {
                         if (data.getBoolean("success")) {
                             runOnUiThread(() -> Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show());
+                            TextView textView = findViewById(R.id.status);
+                            textView.setText("Status : Connected");
                         } else {
                             runOnUiThread(() -> Toast.makeText(MainActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show());
+                            TextView textView = findViewById(R.id.status);
+                            textView.setText("Status : Authentication failed");
                         }
                     }
                 } catch (JSONException e) {
