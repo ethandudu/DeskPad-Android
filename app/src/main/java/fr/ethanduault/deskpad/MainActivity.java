@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         JSONArray profiles;
         try {
             profiles = new JSONArray(preferences.getString("profiles", ""));
-            loadProfile(profiles.getJSONObject(0).getString("name"));
+            if (profiles.length() > 0) loadProfile(profiles.getJSONObject(0).getString("name"));
 
         } catch (JSONException e) {
             throw new RuntimeException(e);
