@@ -53,10 +53,11 @@ public class SettingsActivity extends AppCompatActivity {
             }
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString("ipAddress", ipAddress.getText().toString());
-            editor.putString("port", port.getText().toString());
+            editor.putInt("port", Integer.parseInt(port.getText().toString()));
             editor.putString("password", password.getText().toString());
             editor.apply();
             Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+            startActivity(intent);
             finish();
         });
     }
