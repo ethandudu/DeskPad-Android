@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +51,16 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
             return;
+        }
+
+        //load the first profile
+        JSONArray profiles;
+        try {
+            profiles = new JSONArray(preferences.getString("profiles", ""));
+            loadProfile(profiles.getJSONObject(0).getString("name"));
+
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
 
         Button buttonSettings = findViewById(R.id.settings);
@@ -189,6 +198,9 @@ public class MainActivity extends AppCompatActivity {
         Button button4 = findViewById(R.id.button4);
         Button button5 = findViewById(R.id.button5);
         Button button6 = findViewById(R.id.button6);
+
+        TextView profileText = findViewById(R.id.profile);
+        profileText.setText(name);
 
         try {
             profiles = new JSONArray(preferences.getString("profiles", ""));
