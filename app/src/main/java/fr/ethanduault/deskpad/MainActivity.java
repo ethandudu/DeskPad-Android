@@ -28,7 +28,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 public class MainActivity extends AppCompatActivity {
 
     private WebSocketClient webSocketClient;
@@ -79,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String[] choices;
                 JSONArray profiles;
+
                 try {
                     profiles = new JSONArray(preferences.getString("profiles", ""));
                     choices = new String[profiles.length()];
@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder
@@ -107,10 +106,8 @@ public class MainActivity extends AppCompatActivity {
 
                 AlertDialog dialog = builder.create();
                 dialog.show();
-
             }
         });
-
         createWebSocketClient(preferences.getString("ipAddress", ""), preferences.getInt("port", 9876));
     }
 
@@ -215,10 +212,6 @@ public class MainActivity extends AppCompatActivity {
                                 case 1:
                                     button1.setText(data.getString("value"));
                                     button1.setOnClickListener(v -> sendMessage("key", value));
-                                    button1.setOnLongClickListener(v -> {
-                                        sendMessage("key", value);
-                                        return true;
-                                    });
                                     break;
                                 case 2:
                                     button2.setText(data.getString("value"));
@@ -249,5 +242,20 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void saveProfile(String name) {
+        
+    }
+
+    private void editKeyBinding(int button) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this)
+                .setTitle("Edit key binding")
+                .setMessage("Enter the key you want to bind to this button")
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                })
+                .setNeutralButton("Set", (dialog, which) -> {
+                });
+        alert.show();
     }
 }
